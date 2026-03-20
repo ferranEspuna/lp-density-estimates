@@ -1,5 +1,6 @@
 from scipy.optimize import linprog
 import numpy as np
+import scipy.sparse as sp
 from pydantic import BaseModel, model_validator
 
 # sets of either $dA-x$ or $\mathbb{F}_p \setminus (dA-x)$
@@ -125,30 +126,58 @@ def optimize(lp: lp_problem):
     for v, coef in zip(lp.objective.variables, lp.objective.coefficients):
         c[var_idx[v]] += coef
         
-    A_eq = []
+    # We separate constraints into equalities and upper-bound inequalities.
+    eqs_eq = [eq for eq in lp.equations if eq.equals]
+    eqs_ub = [eq for eq in lp.equations if not eq.equals]
+
+    # OPTIMIZATION: Using coordinate lists to build SciPy sparse matrices
+    # Dense lists (A_eq.append(row)) evaluate at O(E * V) memory spanning 
+    # hundreds of MBs and lagging the HiGHS solver heavily on huge configuration states.
+    # Passing raw coordinate data (`csr_matrix`) ensures LP pivoting is virtually instantaneous.
+    A_eq_row = []
+    A_eq_col = []
+    A_eq_data = []
     b_eq = []
-    A_ub = []
-    b_ub = []
-    
-    for eq in lp.equations:
-        row = np.zeros(n_vars)
+
+    for r, eq in enumerate(eqs_eq):
         for v, coef in zip(eq.variables, eq.coefficients):
-            row[var_idx[v]] += coef
-            
-        if eq.equals:
-            A_eq.append(row)
-            b_eq.append(eq.independent_term)
-        else:
-            A_ub.append(-row)
-            b_ub.append(-eq.independent_term)
-            
+            A_eq_row.append(r)
+            A_eq_col.append(var_idx[v])
+            A_eq_data.append(coef)
+        b_eq.append(eq.independent_term)
+
+    A_ub_row = []
+    A_ub_col = []
+    A_ub_data = []
+    b_ub = []
+
+    for r, eq in enumerate(eqs_ub):
+        # Multiply by -1 since linprog strictly evaluates inequalities as A_ub * x <= b_ub
+        # but the class configuration typically structures them as >= inequalities computationally.
+        for v, coef in zip(eq.variables, eq.coefficients):
+            A_ub_row.append(r)
+            A_ub_col.append(var_idx[v])
+            A_ub_data.append(-coef)
+        b_ub.append(-eq.independent_term)
+
+    # Densities strictly bounded within [0, 1] natively for atomic evaluations.
     bounds = [(0, 1) for _ in range(n_vars)]
-    
-    A_eq_arr = np.array(A_eq) if A_eq else None
-    b_eq_arr = np.array(b_eq) if b_eq else None
-    A_ub_arr = np.array(A_ub) if A_ub else None
-    b_ub_arr = np.array(b_ub) if b_ub else None
-    
+
+    if eqs_eq:
+        A_eq_arr = sp.csr_matrix((A_eq_data, (A_eq_row, A_eq_col)), shape=(len(eqs_eq), n_vars))
+        b_eq_arr = np.array(b_eq)
+    else:
+        A_eq_arr = None
+        b_eq_arr = None
+
+    if eqs_ub:
+        A_ub_arr = sp.csr_matrix((A_ub_data, (A_ub_row, A_ub_col)), shape=(len(eqs_ub), n_vars))
+        b_ub_arr = np.array(b_ub)
+    else:
+        A_ub_arr = None
+        b_ub_arr = None
+
+    # Solve the canonical formulation
     res = linprog(c, A_ub=A_ub_arr, b_ub=b_ub_arr, A_eq=A_eq_arr, b_eq=b_eq_arr, bounds=bounds)
     return res
 
