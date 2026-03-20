@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\title{On the Density of Kravitz Sets (Excerpts)}
+\author{Vsevolod Lev, Máté Matolcsi, Péter Pál Pach, and Daniel Varga}
+\date{October 21, 2025}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{conjecture}{Conjecture}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction and Notation}
+At the problem session of the Edinburgh meeting on additive combinatorics (2024), Noah Kravitz asked how large a subset $A \subseteq \mathbb{F}_{p}$ can be such that $A+A-2A \ne \mathbb{F}_{p}$[cite: 7]. For a prime $p$, $\mathbb{F}_{p}$ denotes the finite field with $p$ elements[cite: 7]. 
+
+The dilate of the set $A$ by a factor $\lambda$ is defined as $\lambda A = \{\lambda a : a \in A\}$[cite: 7, 9]. The sumset of interest is defined as:
+\begin{equation}
+    A+A-2A = \{a_{1} + a_{2} - 2a_{3} : a_{1}, a_{2}, a_{3} \in A\} \text{[cite: 10].}
+\end{equation}
+
+The primary result of this paper is as follows:
+\begin{theorem}
+If $p > 3$ is a prime and $A \subseteq \mathbb{F}_{p}$ is a subset of size $|A| > \frac{2}{7}p$, then $A+A-2A = \mathbb{F}_{p}$[cite: 4, 30].
+\end{theorem}
+
+For a set $A \subset \mathbb{F}_{p}$, we denote its density by $\delta(A) = \frac{|A|}{p}$[cite: 45, 46].
+
+\section{Linear Programming Proof of Theorem 1}
+To prove Theorem 1, it suffices to show that for some fixed, nonzero $d \in \mathbb{F}_{p}$, assuming $|A| > \frac{2}{7}p$ we have $d \in A+A-2A$[cite: 64]. Applying this to the set $c^{-1}dA$ concludes that $c \in A+A-2A$ for any nonzero $c \in \mathbb{F}_{p}$[cite: 65].
+
+We seek a witness set $X = \{x_{1}, x_{2}, \dots, x_{n}\} \subset \mathbb{F}_{p}$[cite: 66]. For any vector $\epsilon \in \{\pm 1\}^{n}$, we associate the atomic density:
+\begin{equation}
+    a_{X}(\epsilon) = \delta \left( \bigcap_{i=1}^{n} (A - x_{i})^{\epsilon_{i}} \right) \text{[cite: 68],}
+\end{equation}
+where $Y^{1} = Y$ and $Y^{-1} = \mathbb{F}_{p} \setminus Y$[cite: 66]. For $I = \{i_{1}, \dots, i_{r}\} \subset \{1, \dots, n\}$, we define the aggregate functional:
+\begin{equation}
+    \overline{a}_{X}(I) = \sum_{\epsilon|I=+1} a_{X}(\epsilon) = \delta((A - x_{i_{1}}) \cap \dots \cap (A - x_{i_{r}})) \text{[cite: 72, 73].}
+\end{equation}
+
+The atomic densities $a_{X}(\epsilon)$ are treated as formal variables in a linear program satisfying[cite: 92]:
+\begin{itemize}
+    \item $\sum_{\epsilon \in \{\pm 1\}^{n}} a_{X}(\epsilon) = 1$[cite: 79].
+    \item $a_{X}(\epsilon) \ge 0$ for all $\epsilon \in \{\pm 1\}^{n}$[cite: 80].
+    \item $\sum_{\epsilon:\epsilon_{j}=1} a_{X}(\epsilon) = \delta(A)$ for all $1 \le j \le n$[cite: 81].
+    \item $a_{X}(\epsilon) = 0$ whenever $x_{i} + x_{j} - 2x_{k} = d$ and $\epsilon_{i} = \epsilon_{j} = \epsilon_{k} = 1$[cite: 82].
+    \item If a collection of elements in $X$ is a translate of another, then $\overline{a}_{X}(i_{1}, \dots, i_{r}) = \overline{a}_{X}(j_{1}, \dots, j_{r})$[cite: 89, 90, 91].
+\end{itemize}
+
+The objective is to maximize $\delta(A)$[cite: 93]. By choosing $d = 6$ and the witness set $X = \{0, 2, 3, 4, 7, 8, 9, 10\}$, the resulting linear program proves $\delta(A) \le \frac{2}{7}$ for any $p \ge 11$[cite: 100, 101]. This witness set also testifies the bound for any set $A \subset \mathbb{Z}_{n}$ where $n$ is coprime to 6[cite: 109, 110, 177].
+
+\end{document}
