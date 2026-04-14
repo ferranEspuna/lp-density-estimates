@@ -179,5 +179,6 @@ def optimize(lp: lp_problem):
 
     # Solve the canonical formulation
     res = linprog(c, A_ub=A_ub_arr, b_ub=b_ub_arr, A_eq=A_eq_arr, b_eq=b_eq_arr, bounds=bounds)
+    res.lp_variables = variables
     return res
 

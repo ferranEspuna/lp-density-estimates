@@ -1,0 +1,266 @@
+\documentclass[a4paper,12pt,reqno]{amsart}
+
+\usepackage{amsmath, amsfonts, amssymb, amsthm, mathrsfs, mathtools, mathalfa, setspace}
+\usepackage{caption}
+\usepackage{comment}
+\usepackage{yfonts}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{stmaryrd}
+\usepackage{fancyhdr}
+\usepackage{bm}
+\usepackage[utf8]{inputenc}
+\usepackage[pdfencoding=auto,hyperfootnotes=false,backref=page]{hyperref}
+\usepackage{tikz,tikz-cd}
+\usepackage[hang,flushmargin]{footmisc}
+\usepackage{xr}
+\usepackage{extarrows}
+\usepackage{todonotes}
+\usepackage{faktor}
+\usepackage{xfrac}
+\usepackage{times}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{quiver}
+\usetikzlibrary{babel}
+\usepackage{xurl}
+\usepackage{bbm}
+
+
+\usetikzlibrary{arrows}
+\usetikzlibrary{positioning, arrows.meta}
+
+\makeatletter
+\def\@tocline#1#2#3#4#5#6#7{\relax
+  \ifnum #1>\c@tocdepth % then omit
+  \else
+    \par \addpenalty\@secpenalty\addvspace{#2}%
+    \begingroup \hyphenpenalty\@M
+    \@ifempty{#4}{%
+      \@tempdima\csname r@tocindent\number#1\endcsname\relax
+    }{%
+      \@tempdima#4\relax
+    }%
+    \parindent\z@ \leftskip#3\relax \advance\leftskip\@tempdima\relax
+    \rightskip\@pnumwidth plus4em \parfillskip-\@pnumwidth
+    #5\leavevmode\hskip-\@tempdima
+      \ifcase #1
+       \or\or \hskip 1em \or \hskip 2em \else \hskip 3em \fi%
+      #6\nobreak\relax
+    \dotfill\hbox to\@pnumwidth{\@tocpagenum{#7}}\par
+    \nobreak
+    \endgroup
+  \fi}
+\makeatother
+
+\special{!
+/setdistillerparams where {pop}{userdict /setdistillerparams {pop} put}ifelse
+ <</AutoRotatePages /None>> setdistillerparams
+}
+
+
+\special{!
+/setdistillerparams where {pop}{userdict /setdistillerparams {pop} put}ifelse
+ <</AutoRotatePages /None>> setdistillerparams
+}
+
+\topmargin -0.2 cm
+%\linespread{1.3}
+\evensidemargin 0cm
+\oddsidemargin 0cm
+\textheight 24 cm
+%\textheight 615pt
+\marginparwidth = 55pt
+\textwidth 16cm
+%\textwidth 360pt
+\setlength{\parindent}{0.7 cm}
+\setlength{\footskip}{1.5 cm}
+\setlength {\marginparwidth }{2cm}
+
+\renewcommand{\baselinestretch}{1.5}
+\newcommand{\myp}{{\vskip0.2truein}}
+\newcommand{\fixme}[1]{\textcolor{red}{\textbf{(#1)}}}
+\newcommand{\cubes}{\mathbf{Cubes}}
+\newcommand{\Hom}{\mathrm{Hom}}
+
+\newcommand*{\compl}[1]{#1^\dagger}
+
+% ---------- Basic notation ----------
+\newcommand{\Gammaact}{T} % action T^\gamma
+\newcommand{\cube}[1]{\{0,1\}^{#1}}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\0}{\mathbf{0}}
+\newcommand{\del}{\partial}
+\newcommand{\cH}{\mathcal{H}}
+
+
+% parity / alternating signs on cube vertices
+\newcommand{\sgn}[1]{(-1)^{|#1|}}
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{defn}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{goal}[theorem]{Goal}
+
+
+\newcommand{\R}[0]{\hbox{$\mathcal R$}}
+\newcommand*{\sbr}[1]{\scalebox{0.8}{$(#1)$}}
+\newcommand*{\db}[1]{\llbracket #1\rrbracket}
+\newcommand{\tb}{\textbf}
+\newcommand{\mk}{\mathfrak}
+\newcommand{\mc}{\mathcal}
+\newcommand{\ms}{\mathscr}
+\newcommand{\mt}{\mathtt}
+\newcommand{\mf}{\mathbf}
+\newcommand{\mb}{\mathbb}
+\newcommand{\mr}{\mathrm}
+\newcommand{\parc}{\partial}
+\newcommand{\wh}{\widehat}
+\newcommand{\wt}{\widetilde}
+\newcommand{\st}{\mathrm{st}}
+\newcommand{\nst}[1]{{^*#1}} % non-standard
+\renewcommand{\theenumi}{\roman{enumi}}
+\renewcommand{\labelenumi}{\textup{(}\theenumi\textup{)}}
+\newcommand{\eulerian}[2]{\genfrac{\langle}{\rangle}{0pt}{}{#1}{#2}}
+\newcommand{\ud}{\,\mathrm{d}}
+\newcommand{\id}{\mathrm{id}}
+
+
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\stab}{\mathrm{Stab}}
+\newcommand{\aut}{\mathrm{Aut}}
+
+\newcommand{\ab}{\mathrm{Z}} 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\Bo}{\mathrm{B}}
+\newcommand{\tran}{\mathrm{\Theta}}
+\newcommand{\hcf}{\mathrm{hcf}}
+\newcommand{\lcm}{\mathrm{lcm}}
+\newcommand{\ia}{\wp}
+\newcommand{\poly}{\mathrm{poly}}
+\newcommand{\Span}{\mathrm{Span}}
+\newcommand{\Supp}{\mathrm{Supp}}
+\newcommand{\Lip}{\mathrm{Lip}}
+\newcommand{\adj}{\mathrm{adj}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\sign}{\mathrm{sign}}
+\newcommand{\codim}{\mathrm{codim}}
+\newcommand{\comp}{\mathrm{K}}
+\newcommand{\coup}{\mathsf{Cg}}
+\newcommand{\q}{\mathrm{c}}
+\newcommand{\ns}{\mathrm{X}}
+\newcommand{\nss}{\mathrm{Y}}
+\newcommand{\co}{\circ\hspace{-0.02cm}}
+\newcommand{\cu}{\mathrm{C}}
+\newcommand{\cor}{\mathrm{Cor}}
+\newcommand{\cs}{\mathrm{s}}
+\newcommand{\upmod}{\perp\!\!\!\perp}
+\newcommand{\Aff}{\mathrm{Aff}}
+\newcommand{\bnd}{\mathrm{B}}
+\newcommand{\abph}{\mathrm{U}}
+\newcommand{\diam}{\mathrm{diam}}
+\newcommand{\nor}{\mathrm{\Xi}}
+\newcommand{\mcd}{\mathrm{mcd}}
+\newcommand{\inv}{\mathrm{inv}}
+\newcommand{\orb}{\mathrm{orb}}
+\newcommand{\ev}{\mathrm{ev}}
+\newcommand{\tRe}{\mathrm{Re}}
+\newcommand{\tIm}{\mathrm{Im}}
+\newcommand{\Zmod}[1]{\Z/#1\Z} % \Z/#1\Z or \Z_{#1} -- easily change from Z_p to Z/pZ
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\arr}[1]{\langle#1\rangle}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+\providecommand{\Tnorm}[1]{\lVert#1\rVert_{\T}}
+\providecommand{\md}{d}
+\providecommand{\GL}[1]{\GLs(#1,2)\rtimes \mathbb{Z}_2^{#1}}
+\providecommand{\comm}[1]{[#1]}
+
+\setlength {\marginparwidth }{2cm}
+
+
+\setcounter{tocdepth}{2}
+
+
+\DeclareMathOperator{\tnss}{\tilde{\nss}}
+
+\begin{document}
+\title{On $m$-sum-free sets in $\mb{Z}/p\mb{Z}$}
+
+\author{}
+
+\maketitle
+
+\section{Introduction}
+
+A motivation for this project is to study whether methods involving Linear Programming, used in recent works such as \cite{LMPV}, can help to improve the best known upper bounds for the densities of so-called \emph{$m$-sum-free sets} in cyclic groups of prime order. 
+
+For a positive integer $m$, a set $A\subset \mb{Z}/p\mb{Z}$ is said to be \emph{$m$-sum-free} if there is no triple $(x,y,z)\in A^3$ satisfying the equation $x+y=mz$. Equivalently, the set $A$ is $m$-sum-free if the sum of dilates $A+A-m\cdot A$ does not contain $0$. Also equivalently, $A$ is $m$-sum-free if $(A+A)\cap (m\cdot A) =\emptyset$.
+
+Using the Cauchy-Davenport theorem and this last equivalent definition, it is readily seen that the density of an $m$-sum-free set is at most 1/3. Interestingly, this natural upper bound is far from sharp, and it is a non-trivial problem to improve the upper bounds on the density of $m$-sum-free sets (below we give more details on known results in this direction).
+
+The topic of $m$-sum-free sets can be connected with linear programming methods such as those of \cite{LMPV} as follows:  Theorem 1 from \cite{LMPV} immediately implies that a ``$2$-sum-free" set in $\mb{Z}/p\mb{Z}$ must have density at most $2/7$ (which is less/better than the ``trivial" Cauchy-Davenport bound of $1/3$ mentioned above). Of course, in this $m=2$ case of the $m$-sum-free-set problem, this upper bound is not interesting.\footnote{Strictly speaking, a non-empty set $A$ cannot be 2-sum-free since any $x\in A$ yields a solution $(x,x,x)$ to the equation that $A$ is supposed to avoid; even if we strengthened the $2$-sum-free property by requiring a solution $(x,y,z)$ to have \emph{distinct} coordinates $x,y,z$, still Roth's theorem would tell us that $|A|$ must in fact be at most $o(p)$.} However, if the linear programming methods used in \cite{LMPV} could be extended to generalize \cite[Theorem 1]{LMPV} for $m>2$, then this would give upper bounds for the densities of sets $A$ such that  $A+A-m\cdot A$ does not fill all of $\mb{Z}/p\mb{Z}$. This could yield new upper bounds which, for $m>2$, would be interesting.
+
+\section{The state of the art on bounds for $m$-sum-free sets}
+
+The best bounds on $m$-sum-free sets for $m\geq 3$ that are explicitly worked out in the literature are (to the best of our knowledge) in \cite{CGG}, namely Theorems 1.5 and 1.7 in that paper, which together tell us that the maximum density of an $m$-sum-free set is between $1/8$ and $1/3.1955$. 
+
+Note that the $2/7$ upper bound implied by \cite[Theorem 1]{LMPV} is less than $1/3.1955$, so a generalization of \cite[Theorem 1]{LMPV} to $m\geq 3$ with a similar bound close to 2/7 would already give an improvement on this result from \cite{CGG}. 
+
+However, there is more recent work \cite{Gryn} by Grynkiewicz which improves a central tool that was used in \cite{CGG} to get the upper bound $1/3.1955$ (that tool being \cite[Theorem 1.4]{CGG}, i.e.\ a Freiman $3k-4$ type result in $\mb{Z}/p\mb{Z}$ optimized for mid-density sets). At first sight, Grynkiewicz's new main result (i.e. Theorem 1.3 in \cite{Gryn}) does not improve directly upon \cite[Theorem 1.4]{CGG}. However, the paper \cite{Gryn} is very technical and full of variants of its main result, and it is not clear to us yet that some such variant (e.g. \cite[Theorem 3.3]{Gryn}) cannot be optimized easily to improve the upper bound 1/3.1955 to some smaller number. We would need to check/calculate this to know what the LP method would really have to beat. This is work in progress which we will try to report upon in this section soon.
+
+\bigskip
+
+\todo[inline]{Please feel free to add anything here, e.g. new sections to explain or explore the possible extensions of the LP method. (Pablo)}
+
+\section{Overview of the LP method}
+
+The approach in \cite{LMPV} is to view the density of a set $A \subset \mb{Z}/p\mb{Z}$
+as a linear function of the densities of related \emph{atomic} sets $S_{\epsilon} = \bigcap_{i \in I}(A - x_i)^{\epsilon_i}$, for $\epsilon \in \{-1, 1\}^{\abs{I}}$ and taking $X^{-1}$ to be $\mb{Z}/p\mb{Z} \setminus X$. These \emph{atomic densities} must satisfy linear relations such as being nonnegative, having a sum of $1$, and translation invariance in the sense that if $j_k = i_k + t$ for some choices of $i_k, j_k \in [1, \abs{I}]$, then $\delta\left(\cap_k(A - x_{i_k})\right) = \delta\left(\cap_k(A - x_{j_k})\right)$.
+
+Furthermore, assume that $d = 6 \notin A + A - 2 \cdot A$. If $\epsilon_i = \epsilon_j = \epsilon_k = 1$ and $x_i + x_j - 2x_k = d$, then $S_\epsilon$ must be empty, making its density 0. If we view the densities of all the sets as variables in a linear program, we can maximize the density of $A$. A certain small choice of $x_i$ that does not depend on $p$ yields the upper bound $2/7$.
+
+\section{Initial obstacles for generalizing the LP method}
+
+One might think that this argument easily translates to our setup since we are trying to find the maximum density of a set $A$ such that $0 \notin A + A - k \cdot A$. However, trying to apply it directly, one runs into the following issue. Suppose $c \in (A - x_1) \cap (A - x_2) \cap (A - x_3)$. That is, $x_1 = a_1 - c$, $x_2 = a_2 - c$, and $x_3 = a_3 - c$ for $a_1, a_2, a_3 \in A$. Since $1 + 1 - k = 2 - k \neq 0$, there is no way to combine these expressions into $a_1 + a_2 - ka_3 = 0$ with the $c$'s canceling out.
+
+One possible fix to this is to explore other choices of the atomic sets. For example, for $k = 4$, one might consider the sets $S_{\epsilon}$ as before, $T_{\mu} = \bigcap_{j \in J}(2 \cdot A - y_j)^{\mu_j}$, and the atoms $U_{\epsilon, \mu} = S_{\epsilon}\cap T_{\mu}$. Indeed,
+if $c \in (A - x_1) \cap (A - x_2) \cap (2 \cdot A - y_3)$ and $x_1 + x_2 - 2y_3 = 0$ then
+\[
+    0 = c + c - 2c = (a_1 - x_1) + (a_2 - x_2) - 2(2a_3 - y_3) = a_1 + a_2 - 4a_3 - (x_1 + x_2 - 2y_3).
+\]
+Since $x_1 + x_2 - 2y_3 = 0$, this yields $a_1 + a_2 - 4a_3 = 0$, which contradicts our assumption about the set $A$. This adds similar constraints to our linear program. However, with this approach and after some computer search (\url{https://github.com/ferranEspuna/lp-density-estimates}), I [Ferran] have not been successful in establishing any upper bounds below the trivial $1/2$.
+The reason for this is that there is a corresponding trivial solution which we can describe as follows. Let $\epsilon_1 = \mathbbm{1}_{I}$ and $\mu_{1} = \mathbbm{1}_{J}$. Then, setting $\delta(U_{\epsilon_1, -\mu_1}) = \delta(U_{-\epsilon_1, \mu_1}) = 1/2$ and the rest of atomic densities to $0$ satisfies all constraints that we can naively impose with shifts that do not depend on $p$.
+
+
+
+\begin{thebibliography}{1}
+
+\bibitem{LMPV} V. Lev, M. Matolcsi, P. P. Pach, D. Varga,   \emph{On the density of kravitz sets}, \url{https://arxiv.org/pdf/2510.16522}.
+
+\bibitem{CGG} P. Candela, D. González-Sánchez, D. Grynkiewicz, \emph{On sets with small sumset and $m$-sum-free sets in $\mb{Z}/p\mb{Z}$}, 
+\url{https://arxiv.org/pdf/1909.07967}
+
+\bibitem{Gryn} D. Grynkiewicz, \emph{The $3k-4$ theorem modulo a prime: high density for $A+B$}, 
+\url{https://arxiv.org/pdf/2402.15028}
+
+\end{thebibliography}
+\end{document}
