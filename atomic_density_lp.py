@@ -8,6 +8,7 @@ class relevant_set(BaseModel):
     model_config = {"frozen": True}
     dilation: int = 1
     shift: int = 1
+    label: str = ""
     complementary: bool = False
 
     @model_validator(mode="after")
@@ -20,6 +21,7 @@ class relevant_set(BaseModel):
         return relevant_set(
             dilation=self.dilation,
             shift=self.shift,
+            label=self.label,
             complementary=not self.complementary
         )
 
@@ -181,4 +183,3 @@ def optimize(lp: lp_problem):
     res = linprog(c, A_ub=A_ub_arr, b_ub=b_ub_arr, A_eq=A_eq_arr, b_eq=b_eq_arr, bounds=bounds)
     res.lp_variables = variables
     return res
-

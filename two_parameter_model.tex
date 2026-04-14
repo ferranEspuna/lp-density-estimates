@@ -1,0 +1,241 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+\title{A Two-Parameter Linear Program for the Equation $x+y=mz$}
+\author{}
+\date{}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+\begin{document}
+
+\maketitle
+
+\section{Motivation}
+
+Let $p$ be prime and let $A \subseteq \mathbb{F}_p$. We want to bound the density of $A$
+under the assumption that
+\[
+0 \notin A + A - mA,
+\]
+or equivalently that there are no triples $(x,y,z) \in A^3$ such that
+\[
+x+y=mz.
+\]
+
+The one-parameter LP from \texttt{search\_witness\_dil.py} and
+\texttt{affine\_form\_lp.py} studies the joint distribution of indicators
+$1_A(L(t))$ where $L$ is an affine form in a single variable $t$. This captures
+the original Kravitz-set argument well, but it still leaves a large fake feasible
+region for the $m$-sum-free problem.
+
+The natural next step is to let the witness forms depend on two parameters.
+
+\section{The Witness Forms}
+
+Fix a finite family of affine forms
+\[
+L_r(u,v)=a_r u + b_r v + c_r \qquad (1 \le r \le n),
+\]
+where $a_r,b_r,c_r \in \mathbb{Q}$ and the denominators are assumed to be
+invertible modulo $p$.
+
+For each sign pattern $\varepsilon \in \{\pm 1\}^n$, define the atomic set
+\[
+S_{\varepsilon}
+=
+\bigcap_{r=1}^n \bigl( L_r^{-1}(A) \bigr)^{\varepsilon_r},
+\]
+where $X^{+1}=X$ and $X^{-1}=\mathbb{F}_p^2 \setminus X$.
+Its density is
+\[
+a(\varepsilon)=\frac{|S_{\varepsilon}|}{p^2}.
+\]
+
+These are the LP variables. As usual they satisfy
+\[
+\sum_{\varepsilon} a(\varepsilon)=1,
+\qquad
+a(\varepsilon)\geq 0.
+\]
+
+If one of the forms, say $L_1$, is nonconstant, then $L_1(u,v)$ is uniformly
+distributed on $\mathbb{F}_p$, so
+\[
+\delta(A)=\mathbb{P}(L_1(u,v)\in A)
+=
+\sum_{\varepsilon:\,\varepsilon_1=1} a(\varepsilon).
+\]
+The LP objective is to maximize this quantity.
+
+\section{Forbidden Triples}
+
+The key observation is that a triple of witness forms gives an empty atom whenever
+it satisfies the target equation identically.
+
+\begin{proposition}
+Suppose that
+\[
+L_i(u,v)+L_j(u,v)-mL_k(u,v)\equiv 0
+\]
+as an identity in $(u,v)$. If $\varepsilon_i=\varepsilon_j=\varepsilon_k=1$,
+then the atom $S_{\varepsilon}$ is empty.
+\end{proposition}
+
+\begin{proof}
+Take $(u,v) \in S_{\varepsilon}$. Then $L_i(u,v),L_j(u,v),L_k(u,v)\in A$.
+Since the displayed identity holds for every $(u,v)$, we get
+\[
+L_i(u,v)+L_j(u,v)=mL_k(u,v),
+\]
+which is forbidden by the assumption on $A$.
+\end{proof}
+
+Writing the identity coefficientwise, the condition is
+\[
+a_i+a_j-ma_k=0,\qquad
+b_i+b_j-mb_k=0,\qquad
+c_i+c_j-mc_k=0.
+\]
+Whenever this happens, the LP sets every atom with
+$\varepsilon_i=\varepsilon_j=\varepsilon_k=1$ equal to $0$.
+
+\section{Affine Symmetry on the Parameter Plane}
+
+The analogue of translation invariance from the one-parameter LP is now invariance
+under affine reparameterizations of $(u,v)$.
+
+If
+\[
+T(u,v)=M\binom{u}{v}+t
+\]
+with $M \in \mathrm{GL}_2(\mathbb{F}_p)$ and $t \in \mathbb{F}_p^2$, then
+\[
+\bigl(1_A(L_r(T(u,v)))\bigr)_{r=1}^n
+\]
+has the same distribution as
+\[
+\bigl(1_A(L_r(u,v))\bigr)_{r=1}^n.
+\]
+Therefore two subfamilies of witness forms that differ by precomposition with an
+affine automorphism of $\mathbb{F}_p^2$ must have the same intersection density.
+
+The implementation in \texttt{two\_parameter\_lp.py} enforces this by assigning a
+\emph{canonical shape} to every subset of the witness family.
+
+\subsection*{Rank $1$ normalization}
+
+Assume the coefficient vectors $(a_r,b_r)$ in the subset are all proportional.
+Choose a nonconstant reference form
+\[
+L_{\mathrm{ref}}(u,v)=a_{\mathrm{ref}}u+b_{\mathrm{ref}}v+c_{\mathrm{ref}}.
+\]
+After an affine change of variables, we may normalize this reference form to $u$.
+Every other form in the subset becomes
+\[
+\lambda u + \bigl(c-\lambda c_{\mathrm{ref}}\bigr),
+\]
+where $(a,b)=\lambda(a_{\mathrm{ref}},b_{\mathrm{ref}})$.
+
+So the normalized data are the triples
+\[
+(\lambda,0,c-\lambda c_{\mathrm{ref}}).
+\]
+The code tries all possible reference forms and keeps the lexicographically smallest
+normalized tuple.
+
+\subsection*{Rank $2$ normalization}
+
+Now assume the subset contains two forms with linearly independent coefficient
+vectors. Choose an ordered pair $(L_i,L_j)$ of such forms. After an affine change
+of variables, one can normalize them to
+\[
+L_i(u,v)=u,\qquad L_j(u,v)=v.
+\]
+Every other form in the subset is then expressed in these normalized coordinates.
+
+Concretely, if
+\[
+L_i=a_i u+b_i v+c_i,\qquad L_j=a_j u+b_j v+c_j,
+\]
+and the coefficient vectors are independent, then the normalization is obtained by
+solving:
+\[
+\left(M^T\right)
+\begin{pmatrix}
+a_i & a_j \\
+b_i & b_j
+\end{pmatrix}
+= I_2,
+\qquad
+\begin{pmatrix}
+a_i & b_i \\
+a_j & b_j
+\end{pmatrix}
+t
+=
+\begin{pmatrix}
+-c_i\\
+-c_j
+\end{pmatrix}.
+\]
+The code applies this normalization to every ordered independent pair and again
+keeps the lexicographically smallest normalized tuple.
+
+\section{The Resulting LP}
+
+For a fixed witness family $\mathcal{L}=\{L_1,\dots,L_n\}$, the two-parameter LP is:
+
+\begin{itemize}
+\item Variables: the atom densities $a(\varepsilon)$.
+\item Positivity and mass:
+\[
+a(\varepsilon)\geq 0,\qquad \sum_{\varepsilon} a(\varepsilon)=1.
+\]
+\item Forbidden-triple constraints: if $L_i+L_j-mL_k\equiv 0$, then every atom
+with $\varepsilon_i=\varepsilon_j=\varepsilon_k=1$ has density $0$.
+\item Affine-shape constraints: any two subsets of witness forms with the same
+canonical shape have equal aggregate density.
+\item Objective: maximize
+\[
+\sum_{\varepsilon:\,\varepsilon_{r_0}=1} a(\varepsilon),
+\]
+where $L_{r_0}$ is any nonconstant witness form.
+\end{itemize}
+
+\section{Implementation Notes}
+
+The file \texttt{two\_parameter\_lp.py} implements the model.
+
+\begin{itemize}
+\item \texttt{linear\_form\_2d(a,b,c,label)} stores the form $au+bv+c$.
+\item \texttt{canonical\_subset\_shape} computes the affine normal form of a subset.
+\item \texttt{build\_two\_parameter\_lp(m, forms)} constructs the LP.
+\item \texttt{evaluate\_two\_parameter\_bound(m, forms)} solves it and returns the
+resulting upper bound for $\delta(A)$.
+\end{itemize}
+
+Two simple witness families already illustrate the behavior:
+
+\begin{itemize}
+\item Using only
+\[
+u,\quad v,\quad \frac{u+v}{m},
+\]
+the LP gives the bound $\delta(A)\leq 2/3$.
+\item Adding the extra direction
+\[
+\frac{u-v}{m}
+\]
+improves the bound to $\delta(A)\leq 4/7$ in the initial experiments.
+\end{itemize}
+
+These are not yet competitive with the existing best bounds, but they show that the
+two-parameter model behaves differently from the one-parameter LP and can encode
+new structural information.
+
+\end{document}
