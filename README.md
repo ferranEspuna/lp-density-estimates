@@ -1,32 +1,76 @@
 # LP Density Estimates for Additive Combinatorics
 
-This repository contains tools to specify, model, and bound the maximum density of subsets $A \subseteq \mathbb{F}_p$ that avoid linear equations using pure Linear Programming on atomic constituent intersections. 
+This repository contains linear-programming experiments for bounding the density of
+sets \(A \subseteq \mathbb{F}_p\) that avoid equations of the form
+\[
+x+y=mz.
+\]
 
-## Files and Tooling
+## Project layout
 
-### `atomic_density_lp.py` (Core Engine)
-The foundation of the library. It formalizes intersections of subset families into strict Linear Programming models built on top of Pydantic and SciPy.
-- **Optimization**: This engine originally used a dense array constructor for `linprog`. We dramatically optimized it by precomputing boundary vectors natively into `scipy.sparse.csr_matrix` coordinates. This completely eliminates $O(N^2)$ memory bloat from the solver constraints, accelerating evaluations from ~60 seconds to ~0.05 seconds locally for complex configurations extending upwards of 16,000 bounds!
-- **Data Models**: Pydantic models leverage strict tuple-casting `frozen=True` kwargs to enable proper deep hashing on `lp_variable` instances across disjoint combinations.
+- `atomic_density_lp.py`: shared LP primitives and the SciPy-based solver.
+- `latex/`: ordered LaTeX notes and writeups.
+- `pdfs/`: compiled PDFs produced by `compile_latex.sh`.
 
-### `run_proof.py`
-Replicates the original problem posed in `proof.tex` validating that sets avoiding $a_1 + a_2 - 2a_3 = d$ are strictly bounded by $2/7$. Groups 256 generated intersections computationally and binds translation invariances prior to triggering the constraint matrix properly.
+The LaTeX sources are ordered as:
 
-### `run_proof_4.py`
-Adapts the engine to target formulations avoiding $a + b = 4c$. Handles two independently dilated witness bases ($X$ for $A$ and $Y$ for $2A$). 
-- Explicitly drops atoms where $x + y - 2z = 0$, guaranteeing geometric overlap contradictions are completely factored out.
-- Builds multi-dilation translation symmetries efficiently via an $O(N)$ integer bitmask filtering logic. 
-- **Non-trivial Logic**: Implements rigorous Dilation Equivalences (identifying arbitrary $S_X$ clusters representing shapes bounded inside $X$, multiplying by 2, and natively tracing an equality relation against its exact analog inside $Y$).
+- `latex/1_original_proof_sketch.tex`
+- `latex/2_current_status.tex`
+- `latex/3_lp_investigation_notes.tex`
+- `latex/4_two_parameter_model.tex`
 
-### Systematic Search Scripts
-Created to attempt bypassing trivial bounds (e.g. bounding $< 0.5$ on $a+b=4c$ which $X$ and $Y$ alone naturally regress towards due to integral LP relaxation gaps):
-- `search_witness_dil.py`: Fully randomized heuristic that rapidly attempts $X$ and $Y$ subset iterations (size 6) to spot constraint improvements.
-- `test_aps.py`: Deterministically scales up explicit Arithmetic Progressions against `evaluate_bound(...)`, confirming uniform grid results locally.
-- `test_large_interval.py`: Evaluates strictly contiguous and symmetric spaces bounded from 5 elements up to substantial sizes (e.g., $X=[0..8], Y=[0..8]$). Results prove the local witness LP ceilings at precisely $0.50000$ due to optimal relaxed fractional configurations mimicking the missing density.
+## Which Python file to run
 
-## Usage
-Simply source the local virtual environment and execute the desired sequence:
+- `python3 run_proof.py`
+  Reproduces the original `m=2` witness-set LP and the `2/7` bound.
+
+- `python3 run_proof_4.py`
+  Runs the earlier two-layer experiment for the equation `x+y=4z`, using `A-x`
+  and `2A-y` witness families.
+
+- `python3 search_witness.py`
+  Randomized search over small witness sets for the older `x+y=4z` approach.
+
+- `python3 search_witness_dil.py`
+  Evaluates the older affine/dilation-based `x+y=4z` LP for chosen witness sets.
+  Use this if you want to inspect or compare with the original failing approach.
+
+- `python3 test_aps.py`
+  Deterministic search over arithmetic-progression witnesses for the older
+  `x+y=4z` model.
+
+- `python3 test_large_interval.py`
+  Tests interval-shaped witnesses for the older `x+y=4z` model.
+
+- `python3 -c "from affine_form_lp import evaluate_affine_bound; ..."`
+  Use `affine_form_lp.py` for the cleaned one-parameter affine-form LP that works
+  for general `m`.
+
+- `python3 search_two_parameter.py`
+  Runs small searches for the new two-parameter LP based on forms
+  `L(u,v)=au+bv+c`.
+
+- `python3 -c "from two_parameter_lp import evaluate_two_parameter_bound; ..."`
+  Use `two_parameter_lp.py` directly when you want to evaluate a custom family of
+  two-parameter witness forms.
+
+## LaTeX compilation
+
+Run:
+
 ```bash
-source venv/bin/activate
-python run_proof_4.py
+./compile_latex.sh
 ```
+
+This script:
+
+- compiles every `.tex` file in `latex/`,
+- writes the final PDFs into `pdfs/`,
+- removes generated `.aux`, `.log`, `.out`, `.toc`, `.nav`, `.snm`, `.fls`, and
+  `.fdb_latexmk` files from `latex/`.
+
+## Notes
+
+- `lp_investigation_notes.md` is kept as the original Markdown scratch report.
+  Its LaTeX version lives in `latex/3_lp_investigation_notes.tex`.
+- The LP code depends on SciPy, NumPy, and Pydantic; see `requirements.txt`.

@@ -1,0 +1,137 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+\title{LP Investigation Notes}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{What the current obstruction really is}
+
+The issue described in \texttt{2\_current\_status.tex} is not just that the witness
+sets use too few shifts. The deeper problem is that the present LP is built from a
+one-parameter family of events
+\[
+t \in dA-x \iff \frac{t+x}{d} \in A.
+\]
+So each base set should be viewed as an affine form in one random parameter:
+\[
+L_{d,x}(t) := \frac{t+x}{d}.
+\]
+
+Then an atom is recording the joint membership pattern of the values
+$1_A(L_{d,x}(t))$.
+
+In this language, a forbidden triple appears exactly when
+\[
+L_i(t)+L_j(t)-mL_k(t)\equiv 0
+\]
+as an affine identity. Equivalently,
+\[
+\frac{1}{d_i}+\frac{1}{d_j}=\frac{m}{d_k},
+\qquad
+\frac{x_i}{d_i}+\frac{x_j}{d_j}=\frac{mx_k}{d_k}.
+\]
+This is the clean generalization of the $m=4$ condition $x_i+x_j=2y_k$.
+
+\section{What changes in the affine-form prototype}
+
+The file \texttt{affine\_form\_lp.py} implements this formulation directly.
+Compared with \texttt{search\_witness\_dil.py}, it does two things differently:
+
+\begin{itemize}
+\item It treats $dA-x$ as the affine form $L_{d,x}(t)=(t+x)/d$, so the forbidden
+triples are derived from the exact identity $L_i+L_j-mL_k=0$.
+\item It groups subset constraints by full affine reparameterization of the
+parameter $t$, rather than by ad hoc translation plus a few extra dilation
+equalities.
+\end{itemize}
+
+So this is a mathematically cleaner LP, and it works for any $m$.
+
+\section{What small experiments say}
+
+Small tests with the new builder gave:
+
+\begin{itemize}
+\item $m=3$, layers $[(1,[0,1]), (2,[0,1])]$: bound $0.5$.
+\item $m=3$, layers $[(1,[0,1,2]), (2,[0,1,2])]$: bound $0.5$.
+\item $m=4$, layers $[(1,[0,1]), (2,[0,1])]$: bound $0.5$.
+\item $m=4$, layers $[(1,[0,1,2]), (2,[0,1,2])]$: bound $0.5$.
+\item Small brute-force searches over dilations like $(1,2,3)$ and $(1,2,4)$ with
+2--3 shifts per layer also stayed at $0.5$.
+\end{itemize}
+
+So the conclusion is that the present failure is not caused by the particular
+translation or dilation equalities in \texttt{search\_witness\_dil.py}. Even after
+replacing them by the exact one-parameter affine symmetry, the LP still has too
+much room.
+
+\section{Promising LP directions from here}
+
+\subsection*{A. Two-parameter linear-form LP}
+
+This is the most promising extension.
+
+Instead of sampling one random parameter $t$, sample two parameters $(u,v)$ and
+look at linear forms
+\[
+L_r(u,v)=a_ru+b_rv+c_r.
+\]
+Then a forbidden triple is encoded whenever
+\[
+L_i+L_j-mL_k\equiv 0.
+\]
+
+This removes the main obstruction from \texttt{2\_current\_status.tex}: cancellation
+no longer has to come from the single common variable $t$; it can happen in the
+coefficient vectors $(a_r,b_r)$.
+
+For example, for general $m$ one can take
+\[
+L_1(u,v)=u,\qquad
+L_2(u,v)=v,\qquad
+L_3(u,v)=\frac{u+v}{m}.
+\]
+Then $L_1+L_2-mL_3=0$ identically.
+
+\subsection*{B. Extension-hierarchy LP}
+
+Keep the one-parameter affine-form model, but do not optimize on a single witness
+family in isolation. Introduce variables for a larger witness family $F'$ and
+require that its atom distribution marginalizes to the atom distribution on $F$.
+This gives a hierarchy of local consistency constraints.
+
+\subsection*{C. LP plus additive-combinatorial cuts}
+
+If the pure atom LP keeps admitting fake $1/2$ pseudodistributions, add
+inequalities coming from external theorems rather than symmetry alone. Natural
+candidates include:
+
+\begin{itemize}
+\item Pollard-type popular sum inequalities.
+\item Cauchy-Davenport lower bounds on sumsets of dense slices.
+\item Robust $3k-4$ style inequalities on structured pieces.
+\end{itemize}
+
+\section{Recommended next step}
+
+If the goal is to find a formulation that has a realistic chance to beat $1/2$,
+the next thing to implement is:
+
+\begin{enumerate}
+\item A two-parameter linear-form LP for $1_A(L_r(u,v))$.
+\item Optionally, a small extension hierarchy on top of that.
+\end{enumerate}
+
+If the goal is only to continue searching within the current family, use
+\texttt{affine\_form\_lp.py}, not \texttt{search\_witness\_dil.py}, because it is
+the cleaner formulation and already supports arbitrary $m$.
+
+\end{document}
