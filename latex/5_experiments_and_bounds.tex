@@ -1,0 +1,90 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+
+\title{Experiments: Two-Parameter LP Bounds for $x+y=mz$}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Purpose}
+
+This note records reproducible numerical upper bounds produced by the
+two-parameter linear program in \texttt{two\_parameter\_lp.py} (see also
+\texttt{latex/4\_two\_parameter\_model.tex}). These are \emph{LP relaxation}
+bounds: they constrain any joint law on $\mathbb{F}_p^2$ that is consistent with
+affine symmetry and with the empty-atom constraints coming from identities
+$L_i+L_j-mL_k\equiv 0$. They are not proved theorems about $m$-sum-free sets
+unless one supplies an additional argument that realizes the same LP from actual
+sets $A\subset\mathbb{F}_p$.
+
+\section{Witness families}
+
+All experiments use affine forms $L_r(u,v)=a_r u+b_r v+c_r$ with rational
+coefficients (implemented as \texttt{Fraction}s) and integer shifts in the
+constant term. The helper \texttt{pentad\_family(m)} in
+\texttt{two\_parameter\_lp.py} returns the five directions
+\[
+L_1=u,\quad L_2=v,\quad L_3=\frac{u+v}{m},\quad
+L_4=\frac{2u-v}{m},\quad L_5=\frac{u-2v}{m},
+\]
+each with a single shift at $0$.
+
+The classical ``four-direction'' family (coordinates $u$, $v$, $(u+v)/m$,
+$(u-v)/m$) yields the relaxation bound $4/7$ in the initial runs recorded
+earlier. Adding the two extra rational directions $(2u-v)/m$ and $(u-2v)/m$
+reduces the LP value when $m=3$.
+
+\section{Best value found for $m=3$}
+
+Exhaustive search over all $5$-form families obtained by fixing $u$ and $v$ and
+choosing any three further directions from a small integer pool (see
+\texttt{experiments\_two\_parameter.py}) gives a largest observed optimum of
+\[
+\delta(A)\le \frac{8}{15}\approx 0.5333
+\]
+for the pentad above. In the same search, the four-direction
+$u,v,(u+v)/3,(u-v)/3$ family gives $4/7\approx 0.5714$.
+
+An exhaustive sweep over $6$-form families from the same pool (two coordinates
+$u,v$ plus four further directions, single shift each) did not improve on $8/15$
+in floating-point SciPy solves.
+
+\section{Dependence on $m$}
+
+For the \emph{same} pentad family, the reported LP optimum returns to $4/7$ for
+sampled odd $m\ge 5$ (e.g.\ $m\in\{4,5,7\}$ in double-precision checks). Thus the
+improvement to $8/15$ is not uniform in $m$; it reflects additional linear
+relations among the five directions when $m=3$.
+
+\section{Code and solver caveats}
+
+\begin{itemize}
+\item \texttt{evaluate\_two\_parameter\_bound} and \texttt{evaluate\_affine\_bound}
+return \texttt{None} if \texttt{scipy.optimize.linprog} does not report success,
+instead of silently returning $1/2$.
+\item Very large witness families make the LP expensive; start with few forms and
+increase slowly.
+\end{itemize}
+
+\section{Ideas for stronger relaxations}
+
+\begin{itemize}
+\item \textbf{More parameters.} Three independent parameters $(u,v,w)$ and
+linear forms $a u+b v+c w+d$ enlarge the symmetry group and the space of
+forbidden triples; the LP size grows as $2^n$.
+\item \textbf{Consistency across families.} Couple several witness families by
+requiring that marginals of a single global law agree on overlaps (hierarchy /
+Sherali--Adams style).
+\item \textbf{Non-symmetric cuts.} Import inequalities from additive combinatorics
+(Cauchy--Davenport, popular sums) that are valid for \emph{true} set laws but not
+for arbitrary LP pseudodistributions.
+\item \textbf{Modular constraints.} For fixed small $p$, brute-force $A$ and
+compare LP value to $\max_A |A|/p$ to see the relaxation gap on that $p$.
+\end{itemize}
+
+\end{document}

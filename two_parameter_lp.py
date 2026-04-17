@@ -161,6 +161,22 @@ def standard_family(m, shifts_u, shifts_v, shifts_uv):
     )
 
 
+def pentad_family(m):
+    """
+    Five witness directions: u, v, (u+v)/m, (2u-v)/m, (u-2v)/m, each with a single
+    shift at 0. For m=3 the two-parameter LP gives 8/15; for sample choices
+    m in {4, 5, 7} the same family currently returns 4/7 in floating-point solves
+    (see experiments script and latex notes).
+    """
+    return (
+        make_direction_family((1, 0), (0,), prefix="u")
+        + make_direction_family((0, 1), (0,), prefix="v")
+        + make_direction_family((1, 1), (0,), dilation=m, prefix="u_plus_v")
+        + make_direction_family((2, -1), (0,), dilation=m, prefix="two_u_minus_v")
+        + make_direction_family((1, -2), (0,), dilation=m, prefix="u_minus_two_v")
+    )
+
+
 def _mask_contains(mask, submask):
     return (mask & submask) == submask
 
@@ -278,4 +294,6 @@ def evaluate_two_parameter_bound(m, forms, verbose=False):
     result = built["result"]
     if result.success:
         return -result.fun
-    return 0.5
+    if verbose:
+        print(f"LP solver did not succeed: {getattr(result, 'message', '')}")
+    return None

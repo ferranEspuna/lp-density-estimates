@@ -176,4 +176,6 @@ def evaluate_affine_bound(m, layers, verbose=False):
     result = built["result"]
     if result.success:
         return -result.fun
-    return 0.5
+    if verbose:
+        print(f"LP solver did not succeed: {getattr(result, 'message', '')}")
+    return None

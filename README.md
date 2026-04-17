@@ -18,6 +18,8 @@ The LaTeX sources are ordered as:
 - `latex/2_current_status.tex`
 - `latex/3_lp_investigation_notes.tex`
 - `latex/4_two_parameter_model.tex`
+- `latex/5_experiments_and_bounds.tex` — recorded LP relaxation values, the $m=3$
+  improvement to **$8/15$**, and ideas for stronger formulations
 
 ## Which Python file to run
 
@@ -44,15 +46,22 @@ The LaTeX sources are ordered as:
 
 - `python3 -c "from affine_form_lp import evaluate_affine_bound; ..."`
   Use `affine_form_lp.py` for the cleaned one-parameter affine-form LP that works
-  for general `m`.
+  for general `m`. On solver failure, `evaluate_affine_bound` returns `None`
+  (not a numeric guess).
+
+- `python3 experiments_two_parameter.py`
+  Reproduces the two-parameter benchmarks: four-direction family ($4/7$ for
+  $m=3$), `pentad_family(m)` ($8/15$ for $m=3$, $4/7$ for sample $m\ge 4$), and a
+  short exhaustive check over a small direction pool.
 
 - `python3 search_two_parameter.py`
-  Runs small searches for the new two-parameter LP based on forms
-  `L(u,v)=au+bv+c`.
+  Runs small searches for the two-parameter LP based on forms `L(u,v)=au+bv+c`.
+  The extended-direction search with a large `max_shift` can take many minutes.
 
-- `python3 -c "from two_parameter_lp import evaluate_two_parameter_bound; ..."`
-  Use `two_parameter_lp.py` directly when you want to evaluate a custom family of
-  two-parameter witness forms.
+- `python3 -c "from two_parameter_lp import evaluate_two_parameter_bound, pentad_family; ..."`
+  Use `two_parameter_lp.py` directly for custom witness families. Helpers include
+  `standard_family`, `make_direction_family`, and `pentad_family`. On solver
+  failure, `evaluate_two_parameter_bound` returns `None`.
 
 ## LaTeX compilation
 
@@ -74,3 +83,8 @@ This script:
 - `lp_investigation_notes.md` is kept as the original Markdown scratch report.
   Its LaTeX version lives in `latex/3_lp_investigation_notes.tex`.
 - The LP code depends on SciPy, NumPy, and Pydantic; see `requirements.txt`.
+- **Scope.** Numerical values from these programs are bounds for the **LP
+  relaxation** defined by affine symmetry and empty-atom constraints; turning
+  them into theorems about $m$-sum-free sets $A\subset\mathbb{F}_p$ requires an
+  additional step (see the discussion in `latex/2_current_status.tex` and
+  `latex/5_experiments_and_bounds.tex`).
