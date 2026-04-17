@@ -1,0 +1,241 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+\title{A Three-Parameter Linear Program for the Equation $x+y=mz$}
+\author{}
+\date{}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{remark}{Remark}
+
+\begin{document}
+
+\maketitle
+
+\section{Motivation}
+
+The one-parameter and two-parameter linear programs of
+\texttt{latex/3\_lp\_investigation\_notes.tex} and
+\texttt{latex/4\_two\_parameter\_model.tex} plateau well above the best
+published upper bounds for the density of $m$-sum-free sets.
+Concretely, in all observed experiments the one-parameter LP never drops below
+$1/2$, and the two-parameter LP stalls at $8/15$ for $m=3$ (see
+\texttt{latex/5\_experiments\_and\_bounds.tex}).
+
+Adding a \emph{third} parameter to the witness model enlarges the affine
+symmetry group from $\mathrm{GL}_2(\mathbb{F}_p)\ltimes\mathbb{F}_p^2$ to
+$\mathrm{GL}_3(\mathbb{F}_p)\ltimes\mathbb{F}_p^3$ and produces many more
+useful forbidden identities. As we show below, already very small three-parameter
+witness families push the LP relaxation bound strictly below $1/2$.
+
+\section{The witness forms}
+
+Fix a finite family of affine forms in three parameters,
+\[
+L_r(u,v,w)=a_r u + b_r v + c_r w + d_r,\qquad 1\le r\le n.
+\]
+For each sign pattern $\varepsilon\in\{\pm 1\}^n$ define the atomic set
+\[
+S_\varepsilon
+=
+\bigcap_{r=1}^n\bigl(L_r^{-1}(A)\bigr)^{\varepsilon_r}\subseteq\mathbb{F}_p^3,
+\]
+with $X^{+1}=X$ and $X^{-1}=\mathbb{F}_p^3\setminus X$. Its (normalized) density
+$a(\varepsilon)=|S_\varepsilon|/p^3$ is the LP variable.
+
+As usual the atoms form a probability distribution and marginalize to the
+density $\delta(A)$ along any nonconstant form:
+\[
+\sum_\varepsilon a(\varepsilon)=1,
+\qquad
+a(\varepsilon)\ge 0,
+\qquad
+\delta(A)=\sum_{\varepsilon:\,\varepsilon_{r_0}=+1}a(\varepsilon)
+\]
+for any $r_0$ with $(a_{r_0},b_{r_0},c_{r_0})\ne 0$.
+
+\section{Forbidden triples}
+
+\begin{proposition}\label{prop:forbidden}
+Assume that $(x,y,z)\in A^3\Rightarrow x+y\ne mz$. If, for a triple $(i,j,k)$,
+\[
+L_i(u,v,w)+L_j(u,v,w)-m L_k(u,v,w)\equiv 0
+\]
+as an identity in $\mathbb{F}_p^3$, then every atom with
+$\varepsilon_i=\varepsilon_j=\varepsilon_k=+1$ is empty.
+\end{proposition}
+
+Coefficientwise, the hypothesis is
+\[
+a_i+a_j=ma_k,\quad
+b_i+b_j=mb_k,\quad
+c_i+c_j=mc_k,\quad
+d_i+d_j=md_k.
+\]
+In the all-zero-shift setting $d_r=0$ this reduces to three linear equations on
+the direction vectors $(a_r,b_r,c_r)\in\mathbb{Q}^3$.
+
+\section{Affine symmetry on $\mathbb{F}_p^3$}
+
+Any affine automorphism $T(u,v,w)=M\cdot(u,v,w)^{\mathsf T}+t$ with
+$M\in\mathrm{GL}_3(\mathbb{F}_p)$ and $t\in\mathbb{F}_p^3$ preserves the
+uniform distribution on $\mathbb{F}_p^3$, hence
+\[
+\delta\!\Bigl(\bigcap_{r\in S} L_r^{-1}(A)\Bigr)
+=
+\delta\!\Bigl(\bigcap_{r\in S'} L_{r'}^{-1}(A)\Bigr)
+\]
+whenever two subfamilies $\{L_r\}_{r\in S}$ and $\{L_{r'}\}_{r'\in S'}$ are
+related by an affine reparameterization of $(u,v,w)$.
+
+\subsection*{Rank-based normalization}
+
+Given a subset of forms, the coefficient vectors $(a_r,b_r,c_r)$ span a linear
+subspace of $\mathbb{Q}^3$ of some rank $r\in\{0,1,2,3\}$. Under the full
+action of $\mathrm{GL}_3(\mathbb{F}_p)\ltimes\mathbb{F}_p^3$, we may always
+rotate coordinates so that this subspace is $\mathbb{Q}^r\times\{0\}^{3-r}$.
+After this, the affine model collapses to an $r$-parameter affine model, and
+the canonical shape can be computed by the existing $r$-parameter logic:
+
+\begin{itemize}
+\item Rank $0$ (all forms constant): shape is the multiset of constant terms.
+\item Rank $1$: project onto the 1-dimensional span and apply the one-parameter
+canonical shape (\texttt{affine\_form\_lp.canonical\_subset\_shape}).
+\item Rank $2$: choose any two independent forms as a basis, expand every other
+form in that basis; apply the two-parameter canonical shape
+(\texttt{two\_parameter\_lp.canonical\_subset\_shape}).
+\item Rank $3$: try every triple of independent forms as a $\mathrm{GL}_3$ basis,
+normalize to $(u,v,w)$, and take the lexicographically smallest tuple.
+\end{itemize}
+
+Tagging the canonical shape with its rank ensures that two subsets of different
+ranks are never identified.
+
+\section{The resulting LP}
+
+Given a family $\mathcal{L}=\{L_1,\dots,L_n\}$, the three-parameter LP has
+
+\begin{itemize}
+\item variables $a(\varepsilon)\ge 0$ for $\varepsilon\in\{\pm 1\}^n$;
+\item the mass constraint $\sum_\varepsilon a(\varepsilon)=1$;
+\item for every identity $L_i+L_j-mL_k\equiv 0$ and every $\varepsilon$ with
+$\varepsilon_i=\varepsilon_j=\varepsilon_k=+1$, the constraint
+$a(\varepsilon)=0$;
+\item for every pair of subsets $S,S'\subseteq\{1,\dots,n\}$ with the same
+canonical shape, the equation
+\[
+\sum_{\varepsilon:\,\varepsilon|_S=+1}a(\varepsilon)
+=
+\sum_{\varepsilon:\,\varepsilon|_{S'}=+1}a(\varepsilon);
+\]
+\item the objective $\max\sum_{\varepsilon:\,\varepsilon_{r_0}=+1}a(\varepsilon)$.
+\end{itemize}
+
+\section{Implementation}
+
+The module \texttt{three\_parameter\_lp.py} implements this model end-to-end:
+
+\begin{itemize}
+\item \texttt{linear\_form\_3d(a,b,c,d,label)} stores a form $au+bv+cw+d$ with
+rational coefficients.
+\item \texttt{canonical\_subset\_shape(forms)} computes the rank-tagged canonical
+shape of a subset. Rank~1 and rank~2 subsets are reduced to the
+one-parameter and two-parameter canonical shapes respectively.
+\item \texttt{form\_relation\_holds(L\_i, L\_j, L\_k, m)} checks whether the
+identity $L_i+L_j-mL_k\equiv 0$ holds.
+\item \texttt{build\_three\_parameter\_lp(m, forms)} assembles the LP above and
+solves it via SciPy's HiGHS backend.
+\item \texttt{evaluate\_three\_parameter\_bound(m, forms)} returns the LP upper
+bound, or \texttt{None} if the solver fails.
+\end{itemize}
+
+\section{Small illustrative families}
+
+The following three families are defined in
+\texttt{experiments\_three\_parameter.py}.
+
+\paragraph{\texttt{basic\_pair\_family}(m).}
+Six forms
+\[
+u,\quad v,\quad w,\quad \frac{u+v}{m},\quad \frac{u+w}{m},\quad \frac{v+w}{m}.
+\]
+Three forbidden triples: $u+v=m\cdot(u+v)/m$, and cyclic rotations. The LP
+optimum is
+\[
+\boxed{\delta(A)\le \frac{16}{33}\approx 0.4848}
+\]
+for every $m\ge 3$ and is \emph{independent} of $m$.
+
+\paragraph{\texttt{signed\_pair\_family}(m).}
+Adds the three ``minus'' variants
+\[
+\frac{u-v}{m},\quad \frac{u-w}{m},\quad \frac{v-w}{m}.
+\]
+The same three forbidden triples hold (the new forms do not participate in any
+identity $L_i+L_j=mL_k$ inside this family), but the symmetry content grows
+substantially. The LP optimum is
+\[
+\boxed{\delta(A)\le \frac{48}{103}\approx 0.4660}
+\]
+uniformly in $m\ge 3$.
+
+\paragraph{\texttt{symmetric\_12\_family}(m).}
+Further adds the three ``$(2a-b-c)/m$'' forms:
+\[
+\frac{2u-v-w}{m},\quad \frac{-u+2v-w}{m},\quad \frac{-u-v+2w}{m}.
+\]
+Still only three forbidden triples, but the added symmetry drops the LP
+optimum to approximately
+\[
+\delta(A)\le 0.4398 \;(m=3),\qquad 0.4386 \;(m=4).
+\]
+
+\section{Why the bound is uniform in $m$ for the smaller families}
+
+The six and nine-form families use only forms of the form
+$(\alpha u+\beta v+\gamma w)/m$ with $(\alpha,\beta,\gamma)\in\mathbb{Z}^3$ and
+$d_r=0$. The change of coordinates $(u,v,w)\mapsto(mu,mv,mw)$ (invertible for
+$\gcd(m,p)=1$) sends this family to an isomorphic family of integer forms for
+every $m$. It maps forbidden identities to forbidden identities (because
+$L_i+L_j=mL_k$ scales consistently), and the ranks and canonical shapes are
+invariants of the affine equivalence class. Consequently the LP is the same
+linear program up to a relabeling of variables, so the optimum does not depend
+on $m$ for $m\ge 3$.
+
+\section{Remarks and caveats}
+
+\begin{remark}
+These are \emph{LP relaxation} bounds for joint atomic laws compatible with
+affine symmetry and the empty-atom constraints. Turning them into theorems
+about $m$-sum-free sets $A\subset\mathbb{F}_p$ requires the usual step of
+realizing the LP from real set statistics, as in \cite{LMPV}.
+\end{remark}
+
+\begin{remark}
+With $n$ forms the LP has at most $2^n$ atomic variables; in practice the
+twelve-form family already produces $2\,880$ variables after the forbidden
+atoms are excluded and about $1\,700$ shape equations, and SciPy's HiGHS solves
+it in a few minutes.
+\end{remark}
+
+\begin{remark}
+The rank-based canonical shape is essential: the earlier three-parameter LP
+stored residual $w$-coefficients for rank-2 subsets and therefore treated
+``tilted'' and ``axis-aligned'' 2-planes as different orbits, losing some
+symmetry equations. After projecting rank-1 and rank-2 subsets to their
+natural low-dimensional models, the LP correctly identifies those subsets and
+the bounds tighten from $21/41$, $11/23$ and $0.449$ down to the values listed
+above.
+\end{remark}
+
+\begin{thebibliography}{1}
+\bibitem{LMPV} V. Lev, M. Matolcsi, P. P. Pach, D. Varga,
+\emph{On the density of Kravitz sets},
+\url{https://arxiv.org/pdf/2510.16522}.
+\end{thebibliography}
+
+\end{document}

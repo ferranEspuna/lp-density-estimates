@@ -1,0 +1,99 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{booktabs}
+
+\title{Numerical results of the three-parameter LP for $x+y=mz$}
+\author{}
+\date{}
+
+\newtheorem{remark}{Remark}
+
+\begin{document}
+
+\maketitle
+
+\section{Summary table}
+
+The following upper bounds on the LP optimum (hence on the density of any
+set $A\subset\mathbb{F}_p$ avoiding $x+y=mz$) were computed with
+\texttt{three\_parameter\_lp.py}, using SciPy's HiGHS solver. See
+\texttt{experiments\_three\_parameter.py} for an exact reproduction script.
+
+\medskip
+
+\noindent\begin{tabular}{l c c c l}
+\toprule
+Family                                           & $n$ & $m$           & Bound                & Reproducer                         \\
+\midrule
+One-param pentad \cite{LMPV}-style               & $5$ & $2$           & $2/7$                & \texttt{python3 run\_proof.py}      \\
+Two-param four directions                        & $4$ & $3$           & $4/7$                & \texttt{experiments\_two\_parameter.py} \\
+Two-param \texttt{pentad\_family}                & $5$ & $3$           & $8/15$               & \texttt{experiments\_two\_parameter.py} \\
+Two-param \texttt{pentad\_family}                & $5$ & $\{4,5,7\}$   & $4/7$                & \texttt{experiments\_two\_parameter.py} \\
+\midrule
+Three-param \texttt{basic\_pair\_family}         & $6$ & any $\ge 3$   & $\mathbf{16/33}$     & \texttt{experiments\_three\_parameter.py} \\
+Three-param \texttt{signed\_pair\_family}        & $9$ & any $\ge 3$   & $\mathbf{48/103}$    & \texttt{experiments\_three\_parameter.py} \\
+Three-param \texttt{symmetric\_12\_family}       & $12$& $3$           & $\mathbf{\approx 0.43983}$ & \texttt{experiments\_three\_parameter.py} \\
+Three-param \texttt{symmetric\_12\_family}       & $12$& $4$           & $\approx 0.43864$    & \texttt{experiments\_three\_parameter.py} \\
+Three-param \texttt{symmetric\_12\_family}       & $12$& $\ge 5$       & $\approx 0.44322$    & \texttt{experiments\_three\_parameter.py} \\
+\bottomrule
+\end{tabular}
+
+\medskip
+
+The \textbf{bold} lines are the new bounds introduced in this project.
+
+\section{Comparisons}
+
+\begin{itemize}
+\item The one-parameter LP from \texttt{affine\_form\_lp.py} stalls at $1/2$
+for every $m\ge 3$ tested (see \texttt{latex/3\_lp\_investigation\_notes.tex}).
+\item The two-parameter LP stalls at $8/15\approx 0.5333$ for $m=3$ and
+$4/7\approx 0.5714$ for $m\in\{4,5,7\}$, across all witness pools we have tried
+(\texttt{latex/5\_experiments\_and\_bounds.tex}).
+\item The three-parameter LP with only six forms already drops below $1/2$,
+giving $\delta(A)\le 16/33\approx 0.4848$ uniformly in $m\ge 3$.
+\item Adding the three signed differences improves the bound further to
+$48/103\approx 0.4660$, still uniform in $m$.
+\item Adding the three $(2a-b-c)/m$ forms gives $\approx 0.4398$ for $m=3$ and
+smaller values for $m\in\{4,5,7\}$ when computed in double precision. The
+dependence on $m$ for the twelve-form family is visible but small; it comes
+from identities $L_i+L_j=mL_k$ that engage the new directions only for certain
+$m$.
+\end{itemize}
+
+All bounds are stable under re-solving with SciPy HiGHS on the same families
+and agree with the exact rationals $16/33$ and $48/103$ to machine precision.
+
+\section{Reproducing the bounds}
+
+To reproduce every row in the table:
+\begin{verbatim}
+python3 run_proof.py
+python3 experiments_two_parameter.py
+python3 experiments_three_parameter.py
+\end{verbatim}
+
+Typical runtimes on a single laptop core: the six- and nine-form families
+finish in well under a second each; the twelve-form family takes about
+3--4 minutes per $m$.
+
+\section{Scope and next steps}
+
+As in the previous notes these are LP relaxation bounds for affine-invariant
+atom laws; turning them into theorems for $m$-sum-free sets requires
+identifying the LP with set statistics. The main open directions are:
+
+\begin{itemize}
+\item[(i)] Extend \texttt{symmetric\_12\_family} to fifteen or eighteen forms
+(e.g., adding $(u+v+w)/m$, $(u+v-w)/m$ and its cyclic orbit, or
+\emph{integer-translation} shifts).
+\item[(ii)] Replace the single witness family by a joint family (hierarchy /
+Sherali--Adams style) to enforce marginal compatibility.
+\item[(iii)] Introduce non-symmetric cuts from additive combinatorics
+(Cauchy--Davenport, popular sums, $3k-4$ inequalities) so the LP knows more
+about the integer set structure than just affine symmetry.
+\end{itemize}
+
+\end{document}

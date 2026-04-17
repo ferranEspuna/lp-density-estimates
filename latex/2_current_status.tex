@@ -229,6 +229,22 @@ However, there is more recent work \cite{Gryn} by Grynkiewicz which improves a c
 
 \bigskip
 
+\paragraph{Update (three-parameter LP).}
+After the writeup of Section \ref{sec:initial-obstacles} below we found that
+the obstruction can actually be overcome by letting the witness forms depend
+on three parameters $(u,v,w)$ rather than one. With that generalization the
+density bound for $m=3$ drops to $16/33\approx 0.4848$ with only six witness
+forms, to $48/103\approx 0.4660$ with nine forms, and to approximately
+$0.4398$ with twelve forms. The same construction works uniformly for every
+$m\ge 3$. A full account is given in \texttt{latex/6\_three\_parameter\_model.tex}
+and the numerical table is in \texttt{latex/7\_three\_parameter\_results.tex}.
+These bounds are still above the unconditional $1/3.1955$ bound of
+\cite{CGG}, so the LP approach is not yet competitive with the
+additive-combinatorial machinery, but they are the first LP relaxation bounds
+that strictly break the $1/2$ barrier for $m\ge 3$.
+
+\bigskip
+
 \todo[inline]{Please feel free to add anything here, e.g. new sections to explain or explore the possible extensions of the LP method. (Pablo)}
 
 \section{Overview of the LP method}
@@ -238,7 +254,7 @@ as a linear function of the densities of related \emph{atomic} sets $S_{\epsilon
 
 Furthermore, assume that $d = 6 \notin A + A - 2 \cdot A$. If $\epsilon_i = \epsilon_j = \epsilon_k = 1$ and $x_i + x_j - 2x_k = d$, then $S_\epsilon$ must be empty, making its density 0. If we view the densities of all the sets as variables in a linear program, we can maximize the density of $A$. A certain small choice of $x_i$ that does not depend on $p$ yields the upper bound $2/7$.
 
-\section{Initial obstacles for generalizing the LP method}
+\section{Initial obstacles for generalizing the LP method}\label{sec:initial-obstacles}
 
 One might think that this argument easily translates to our setup since we are trying to find the maximum density of a set $A$ such that $0 \notin A + A - k \cdot A$. However, trying to apply it directly, one runs into the following issue. Suppose $c \in (A - x_1) \cap (A - x_2) \cap (A - x_3)$. That is, $x_1 = a_1 - c$, $x_2 = a_2 - c$, and $x_3 = a_3 - c$ for $a_1, a_2, a_3 \in A$. Since $1 + 1 - k = 2 - k \neq 0$, there is no way to combine these expressions into $a_1 + a_2 - ka_3 = 0$ with the $c$'s canceling out.
 
